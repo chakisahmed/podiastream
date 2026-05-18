@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "C:\\Users\\chaki\\podiastream\\backend\\venv\\Scripts\\python.exe",
+      "runtimeArgs": ["manage.py", "runserver", "8000"],
+      "cwd": "C:\\Users\\chaki\\podiastream\\backend",
+      "port": 8000
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "C:\\Users\\chaki\\podiastream\\frontend",
+      "port": 3000
+    }
+  ]
+}
