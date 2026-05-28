@@ -1,0 +1,18 @@
+import { cn } from "@/lib/utils";
+
+type MaterialIconProps = {
+  name: string;
+  filled?: boolean;
+  className?: string;
+};
+
+export function MaterialIcon({ name, filled, className }: MaterialIconProps) {
+  return (
+    <span
+      className={cn("material-symbols-outlined", className)}
+      style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}
+    >
+      {name}
+    </span>
+  );
+}
