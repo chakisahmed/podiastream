@@ -8,6 +8,8 @@ from apps.patients.models import Patient
 
 
 class Document(models.Model):
+    BUCKET = "patient-documents"
+
     class DocumentType(models.TextChoices):
         ORDONNANCE = "ordonnance", "Ordonnance"
         COMPTE_RENDU = "compte_rendu", "Compte rendu"

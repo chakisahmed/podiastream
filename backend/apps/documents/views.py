@@ -11,9 +11,6 @@ from .models import Document
 from .serializers import DocumentSerializer
 
 
-DOCUMENTS_BUCKET = "patient-documents"
-
-
 class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
@@ -38,7 +35,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         extension = file.name.rsplit(".", 1)[-1] if "." in file.name else "bin"
         object_path = f"{patient_id}/{uuid.uuid4()}.{extension}"
-        storage.save_file(DOCUMENTS_BUCKET, object_path, file)
+        storage.save_file(Document.BUCKET, object_path, file)
 
         document = Document.objects.create(
             patient_id=patient_id,
@@ -49,13 +46,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
         )
         return Response(DocumentSerializer(document).data, status=status.HTTP_201_CREATED)
 
-    def perform_destroy(self, instance):
-        storage.delete_file(DOCUMENTS_BUCKET, instance.storage_path)
-        instance.delete()
-
     @action(detail=True, methods=["get"], url_path="download")
     def download(self, request, pk=None):
         document = self.get_object()
-        file = storage.open_file(DOCUMENTS_BUCKET, document.storage_path)
+        file = storage.open_file(Document.BUCKET, document.storage_path)
         filename = document.storage_path.rsplit("/", 1)[-1]
         return FileResponse(file, as_attachment=True, filename=filename)

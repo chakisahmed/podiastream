@@ -52,6 +52,8 @@ class InsoleStatusHistory(models.Model):
 
 
 class InsoleAttachment(models.Model):
+    BUCKET = "insole-attachments"
+
     class FileType(models.TextChoices):
         PHOTO_EMPREINTE = "photo_empreinte", "Photo empreinte"
         PHOTO_PIED = "photo_pied", "Photo pied"

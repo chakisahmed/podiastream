@@ -17,9 +17,6 @@ from .serializers import (
 )
 
 
-ATTACHMENTS_BUCKET = "insole-attachments"
-
-
 class InsoleOrderViewSet(viewsets.ModelViewSet):
     queryset = InsoleOrder.objects.all()
     serializer_class = InsoleOrderSerializer
@@ -67,7 +64,7 @@ class InsoleOrderViewSet(viewsets.ModelViewSet):
 
         extension = file.name.rsplit(".", 1)[-1] if "." in file.name else "bin"
         object_path = f"{order.id}/{uuid.uuid4()}.{extension}"
-        storage.save_file(ATTACHMENTS_BUCKET, object_path, file)
+        storage.save_file(InsoleAttachment.BUCKET, object_path, file)
 
         attachment = InsoleAttachment.objects.create(
             insole_order=order,
@@ -83,6 +80,6 @@ class InsoleOrderViewSet(viewsets.ModelViewSet):
     def download_attachment(self, request, pk=None, attachment_id=None):
         order = self.get_object()
         attachment = order.attachments.get(pk=attachment_id)
-        file = storage.open_file(ATTACHMENTS_BUCKET, attachment.storage_path)
+        file = storage.open_file(InsoleAttachment.BUCKET, attachment.storage_path)
         filename = attachment.storage_path.rsplit("/", 1)[-1]
         return FileResponse(file, as_attachment=True, filename=filename)
