@@ -1,5 +1,5 @@
 import { apiFetch, clearAuthToken, setAuthToken } from "./client";
-import type { Profile } from "@/types/profile";
+import type { Profile, ProfileInput } from "@/types/profile";
 
 type LoginResponse = { token: string; profile: Profile };
 
@@ -22,4 +22,18 @@ export async function logout() {
 
 export function getMe() {
   return apiFetch<Profile>("/api/me/");
+}
+
+export function updateProfile(input: Partial<ProfileInput>) {
+  return apiFetch<Profile>("/api/me/", {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export function changePassword(oldPassword: string, newPassword: string) {
+  return apiFetch<void>("/api/auth/change-password/", {
+    method: "POST",
+    body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+  });
 }
