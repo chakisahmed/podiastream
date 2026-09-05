@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MaterialIcon } from "@/components/shared/material-icon";
+import { DocumentList } from "@/components/patients/document-list";
 import { STATUS_BADGE_CLASS } from "@/components/agenda/status-styles";
 import {
   createConsultationNote,
@@ -353,6 +354,9 @@ export default function PatientDetailPage() {
               </ul>
             )}
           </div>
+
+          {/* Documents */}
+          <DocumentList patientId={patient.id} />
         </section>
       </div>
     </>
