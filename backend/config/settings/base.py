@@ -91,6 +91,19 @@ CORS_ALLOWED_ORIGINS = config(
     "CORS_ALLOWED_ORIGINS", default="http://localhost:3000", cast=Csv()
 )
 
+# ---------------------------------------------------------------------------
+# Odoo — reached over XML-RPC on the practice LAN. ODOO_HOST is an mDNS name
+# because the server's IP changes with the network; see apps/core/odoo.py.
+# ---------------------------------------------------------------------------
+ODOO_HOST = config("ODOO_HOST", default="desktop-dsetkvn.local")
+ODOO_PORT = config("ODOO_PORT", default=8069, cast=int)
+ODOO_DB = config("ODOO_DB", default="podologie")
+ODOO_USERNAME = config("ODOO_USERNAME", default="")
+ODOO_PASSWORD = config("ODOO_PASSWORD", default="")
+ODOO_RESOLVE_TTL = config("ODOO_RESOLVE_TTL", default=300, cast=int)
+ODOO_RESOLVE_RETRIES = config("ODOO_RESOLVE_RETRIES", default=5, cast=int)
+ODOO_RESOLVE_RETRY_DELAY = config("ODOO_RESOLVE_RETRY_DELAY", default=1.0, cast=float)
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "apps.accounts.authentication.LocalTokenAuthentication",
