@@ -63,10 +63,22 @@ export function AppointmentModal({
       ? { id: appointment.patient, label: appointment.patientLabel ?? "Patient" }
       : null
   );
+  // A slot can be booked under a bare name. The practice only opens a patient
+  // record once someone actually turns up, so most bookings start like this.
+  const [bookedName, setBookedName] = useState(appointment?.booked_name ?? "");
   const [newPatientMode, setNewPatientMode] = useState(false);
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
   const [newPhone, setNewPhone] = useState("");
+
+  /** Opens the "create the record" form, pre-filled from the booked name —
+   * last token is the surname, as elsewhere. */
+  function startPatientRecord() {
+    const parts = bookedName.trim().split(/\s+/).filter(Boolean);
+    setNewFirstName(parts.slice(0, -1).join(" "));
+    setNewLastName(parts.length ? parts[parts.length - 1] : "");
+    setNewPatientMode(true);
+  }
 
   const initialStart = appointment ? new Date(appointment.start_time) : defaultStart ?? new Date();
 
@@ -100,11 +112,6 @@ export function AppointmentModal({
 
   async function resolveBooking(): Promise<{ patient: string | null; booked_name: string }> {
     if (patient) return { patient: patient.id, booked_name: "" };
-    // Editing an entry that was never tied to a patient — a prospective
-    // patient, or blocked time. Keep it unlinked instead of demanding one.
-    if (appointment && !appointment.patient) {
-      return { patient: null, booked_name: appointment.booked_name };
-    }
     if (newPatientMode && newFirstName && newLastName) {
       const created = await createPatient({
         first_name: newFirstName,
@@ -121,7 +128,8 @@ export function AppointmentModal({
       });
       return { patient: created.id, booked_name: "" };
     }
-    throw new Error("Sélectionnez un patient ou créez-en un nouveau.");
+    if (bookedName.trim()) return { patient: null, booked_name: bookedName.trim() };
+    throw new Error("Choisissez un patient existant, ou indiquez un nom pour la réservation.");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -198,19 +206,43 @@ export function AppointmentModal({
             Patient
           </label>
           {!newPatientMode ? (
-            <>
+            <div className="flex flex-col gap-2">
               <PatientPicker value={patient} onChange={setPatient} />
+
               {!patient && (
-                <button
-                  type="button"
-                  onClick={() => setNewPatientMode(true)}
-                  className="mt-2 text-primary font-label-sm text-label-sm flex items-center gap-1"
-                >
-                  <MaterialIcon name="person_add" className="text-[16px]" />
-                  Nouveau patient
-                </button>
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="h-px flex-1 bg-outline-variant/30" />
+                    <span className="font-label-sm text-label-sm text-on-surface-variant">
+                      ou réserver sous un nom
+                    </span>
+                    <span className="h-px flex-1 bg-outline-variant/30" />
+                  </div>
+
+                  <input
+                    className="glass-input rounded-lg px-3 py-2 text-on-surface"
+                    placeholder="Nom de la réservation"
+                    value={bookedName}
+                    onChange={(e) => setBookedName(e.target.value)}
+                  />
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    Aucun dossier n&apos;est créé pour l&apos;instant — créez-le lorsque la personne
+                    se présente.
+                  </p>
+
+                  {bookedName.trim() && (
+                    <button
+                      type="button"
+                      onClick={startPatientRecord}
+                      className="self-start text-primary font-label-sm text-label-sm flex items-center gap-1"
+                    >
+                      <MaterialIcon name="person_add" className="text-[16px]" />
+                      Créer le dossier patient maintenant
+                    </button>
+                  )}
+                </>
               )}
-            </>
+            </div>
           ) : (
             <div className="flex flex-col gap-2">
               <div className="grid grid-cols-2 gap-2">
@@ -238,7 +270,7 @@ export function AppointmentModal({
                 onClick={() => setNewPatientMode(false)}
                 className="self-start text-on-surface-variant font-label-sm text-label-sm"
               >
-                Choisir un patient existant à la place
+                Revenir à la réservation sans dossier
               </button>
             </div>
           )}
