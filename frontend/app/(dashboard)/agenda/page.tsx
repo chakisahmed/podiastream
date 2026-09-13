@@ -44,8 +44,8 @@ export default function AgendaPage() {
     const { start, end } = rangeForView(viewMode, currentDate);
     listAppointments(start.toISOString(), end.toISOString())
       .then(async (data) => {
-        setAppointments(data.results);
-        const names = await resolvePatientNames(data.results.map((a) => a.patient));
+        setAppointments(data);
+        const names = await resolvePatientNames(data.map((a) => a.patient));
         setPatientNames(new Map(names));
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Erreur"))

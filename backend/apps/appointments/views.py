@@ -7,6 +7,10 @@ from .serializers import AppointmentSerializer
 class AppointmentViewSet(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
+    # A calendar has to show every appointment in the window it is displaying.
+    # Paginated, a busy week silently lost everything past the page size, with
+    # nothing in the UI to say so.
+    pagination_class = None
 
     def get_queryset(self):
         queryset = super().get_queryset()

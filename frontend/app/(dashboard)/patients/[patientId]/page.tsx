@@ -65,7 +65,7 @@ export default function PatientDetailPage() {
       .then(([p, n, a, i]) => {
         setPatient(p);
         setNotes(n.results);
-        setAppointments(a.results);
+        setAppointments(a);
         setInsoleOrders(i);
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Erreur"))

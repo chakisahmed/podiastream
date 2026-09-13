@@ -1,6 +1,5 @@
 import { apiFetch } from "./client";
 import type { Appointment } from "@/types/appointment";
-import type { PaginatedResponse } from "@/types/patient";
 
 export type AppointmentInput = {
   patient: string | null;
@@ -12,16 +11,16 @@ export type AppointmentInput = {
   notes?: string;
 };
 
+// Unpaginated: the agenda must show every appointment in the window, not the
+// first page of it.
 export function listAppointments(startISO: string, endISO: string) {
-  return apiFetch<PaginatedResponse<Appointment>>(
+  return apiFetch<Appointment[]>(
     `/api/appointments/?start=${encodeURIComponent(startISO)}&end=${encodeURIComponent(endISO)}`
   );
 }
 
 export function listAppointmentsForPatient(patientId: string) {
-  return apiFetch<PaginatedResponse<Appointment>>(
-    `/api/appointments/?patient=${patientId}`
-  );
+  return apiFetch<Appointment[]>(`/api/appointments/?patient=${patientId}`);
 }
 
 export function createAppointment(input: AppointmentInput) {

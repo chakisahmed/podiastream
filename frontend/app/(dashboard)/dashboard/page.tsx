@@ -33,11 +33,10 @@ export default function DashboardPage() {
   const [patientNames, setPatientNames] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     listAppointments(atStartOfDay(today).toISOString(), atEndOfDay(today).toISOString())
       .then(async (data) => {
-        const sorted = [...data.results].sort(
+        const sorted = [...data].sort(
           (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
         );
         setAppointments(sorted);
