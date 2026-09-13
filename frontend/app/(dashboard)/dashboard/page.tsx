@@ -6,6 +6,7 @@ import { MaterialIcon } from "@/components/shared/material-icon";
 import { STATUS_ACCENT_CLASS, STATUS_BADGE_CLASS } from "@/components/agenda/status-styles";
 import { listAppointments } from "@/lib/api/appointments";
 import { getWeekDays } from "@/lib/calendar-utils";
+import { getMe } from "@/lib/api/auth";
 import { appointmentLabel, resolvePatientNames } from "@/lib/patient-name-cache";
 import { APPOINTMENT_STATUS_LABELS, APPOINTMENT_TYPE_LABELS } from "@/types/appointment";
 import type { Appointment } from "@/types/appointment";
@@ -33,6 +34,14 @@ export default function DashboardPage() {
   const [patientNames, setPatientNames] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [practitioner, setPractitioner] = useState("");
+
+  useEffect(() => {
+    getMe()
+      .then((profile) => setPractitioner(profile.full_name))
+      .catch(() => setPractitioner(""));
+  }, []);
+
   useEffect(() => {
     listAppointments(atStartOfDay(today).toISOString(), atEndOfDay(today).toISOString())
       .then(async (data) => {
@@ -53,7 +62,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-gutter">
         <div>
           <h1 className="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-surface mb-2">
-            Bonjour, Dr. Smith
+            Bonjour{practitioner ? `, ${practitioner}` : ""}
           </h1>
           <p className="font-body-md text-body-md text-on-surface-variant">
             Voici votre aperçu de la journée.
