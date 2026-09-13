@@ -59,7 +59,7 @@ export function AppointmentModal({
   const isEdit = Boolean(appointment);
 
   const [patient, setPatient] = useState<{ id: string; label: string } | null>(
-    appointment
+    appointment?.patient
       ? { id: appointment.patient, label: appointment.patientLabel ?? "Patient" }
       : null
   );
@@ -98,8 +98,13 @@ export function AppointmentModal({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function resolvePatientId(): Promise<string> {
-    if (patient) return patient.id;
+  async function resolveBooking(): Promise<{ patient: string | null; booked_name: string }> {
+    if (patient) return { patient: patient.id, booked_name: "" };
+    // Editing an entry that was never tied to a patient — a prospective
+    // patient, or blocked time. Keep it unlinked instead of demanding one.
+    if (appointment && !appointment.patient) {
+      return { patient: null, booked_name: appointment.booked_name };
+    }
     if (newPatientMode && newFirstName && newLastName) {
       const created = await createPatient({
         first_name: newFirstName,
@@ -114,7 +119,7 @@ export function AppointmentModal({
         allergies: "",
         medical_background: "",
       });
-      return created.id;
+      return { patient: created.id, booked_name: "" };
     }
     throw new Error("Sélectionnez un patient ou créez-en un nouveau.");
   }
@@ -124,7 +129,7 @@ export function AppointmentModal({
     setPending(true);
     setError(null);
     try {
-      const patientId = await resolvePatientId();
+      const booking = await resolveBooking();
       const startISO = new Date(`${date}T${time}:00`).toISOString();
       const endISO = new Date(
         new Date(`${date}T${time}:00`).getTime() + duration * 60000
@@ -132,7 +137,7 @@ export function AppointmentModal({
 
       if (isEdit && appointment) {
         await updateAppointment(appointment.id, {
-          patient: patientId,
+          ...booking,
           appointment_type: type,
           status,
           start_time: startISO,
@@ -141,7 +146,7 @@ export function AppointmentModal({
         });
       } else {
         await createAppointment({
-          patient: patientId,
+          ...booking,
           appointment_type: type,
           status,
           start_time: startISO,

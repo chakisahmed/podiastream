@@ -1,6 +1,7 @@
 "use client";
 
 import { MaterialIcon } from "@/components/shared/material-icon";
+import { appointmentLabel } from "@/lib/patient-name-cache";
 import { APPOINTMENT_STATUS_LABELS, APPOINTMENT_TYPE_LABELS } from "@/types/appointment";
 import type { Appointment } from "@/types/appointment";
 import { STATUS_ACCENT_CLASS, STATUS_BADGE_CLASS } from "./status-styles";
@@ -58,7 +59,7 @@ export function DayView({
             </span>
           </div>
           <h3 className="font-label-md text-label-md text-on-surface">
-            {patientNames.get(appt.patient) ?? "..."}
+            {appointmentLabel(appt, patientNames)}
           </h3>
           <p className="font-body-sm text-body-sm text-on-surface-variant">
             {APPOINTMENT_TYPE_LABELS[appt.appointment_type]}

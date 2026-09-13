@@ -1,6 +1,7 @@
 "use client";
 
 import { getISOWeekNumber } from "@/lib/calendar-utils";
+import { appointmentLabel } from "@/lib/patient-name-cache";
 import type { Appointment } from "@/types/appointment";
 import { STATUS_BADGE_CLASS } from "./status-styles";
 
@@ -85,13 +86,13 @@ export function MonthView({
                           onSelectAppointment(appt);
                         }}
                         className={`w-full text-left px-1.5 py-0.5 rounded font-label-sm text-label-sm truncate border ${STATUS_BADGE_CLASS[appt.status]}`}
-                        title={`${new Date(appt.start_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} ${patientNames.get(appt.patient) ?? ""}`}
+                        title={`${new Date(appt.start_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} ${appointmentLabel(appt, patientNames)}`}
                       >
                         {new Date(appt.start_time).toLocaleTimeString("fr-FR", {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}{" "}
-                        {patientNames.get(appt.patient) ?? "..."}
+                        {appointmentLabel(appt, patientNames)}
                       </button>
                     ))}
                     {overflow > 0 && (

@@ -12,6 +12,7 @@ class Appointment(models.Model):
         REMISE_SEMELLES = "remise_semelles", "Remise de semelles"
         SOIN_PEDICURIE = "soin_pedicurie", "Soin de pédicurie"
         SUIVI_CONTROLE = "suivi_controle", "Suivi / Contrôle"
+        ABSENCE = "absence", "Absence / Congé"
 
     class Status(models.TextChoices):
         CONFIRME = "confirme", "Confirmé"
@@ -20,7 +21,14 @@ class Appointment(models.Model):
         HONORE = "honore", "Honoré"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="appointments")
+    # Nullable on purpose: a patient record is only created once someone
+    # actually attends, so a booking routinely exists before there is anyone to
+    # point at. Unlinked entries also cover leave and other blocked time.
+    patient = models.ForeignKey(
+        Patient, null=True, blank=True, on_delete=models.CASCADE, related_name="appointments"
+    )
+    # Whoever the slot was booked under, when no patient record exists yet.
+    booked_name = models.CharField(max_length=200, blank=True)
     practitioner = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
     appointment_type = models.CharField(max_length=30, choices=AppointmentType.choices)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.EN_ATTENTE)
@@ -39,4 +47,5 @@ class Appointment(models.Model):
         indexes = [models.Index(fields=["start_time"])]
 
     def __str__(self):
-        return f"{self.patient} — {self.start_time:%d/%m/%Y %H:%M}"
+        who = self.patient or self.booked_name or "—"
+        return f"{who} — {self.start_time:%d/%m/%Y %H:%M}"

@@ -1,12 +1,16 @@
 export type Appointment = {
   id: string;
-  patient: string;
+  // Null until the person actually attends and gets a patient record — and for
+  // entries that are not a patient at all, such as leave.
+  patient: string | null;
+  booked_name: string;
   practitioner: string | null;
   appointment_type:
     | "bilan_podologique"
     | "remise_semelles"
     | "soin_pedicurie"
-    | "suivi_controle";
+    | "suivi_controle"
+    | "absence";
   status: "confirme" | "en_attente" | "annule" | "honore";
   start_time: string;
   end_time: string;
@@ -20,6 +24,7 @@ export const APPOINTMENT_TYPE_LABELS: Record<Appointment["appointment_type"], st
   remise_semelles: "Remise de semelles",
   soin_pedicurie: "Soin de pédicurie",
   suivi_controle: "Suivi / Contrôle",
+  absence: "Absence / Congé",
 };
 
 export const APPOINTMENT_STATUS_LABELS: Record<Appointment["status"], string> = {

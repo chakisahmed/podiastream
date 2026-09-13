@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { appointmentLabel } from "@/lib/patient-name-cache";
 import { APPOINTMENT_TYPE_LABELS } from "@/types/appointment";
 import type { Appointment } from "@/types/appointment";
 import { STATUS_BADGE_CLASS } from "./status-styles";
@@ -205,7 +206,7 @@ export function WeekView({
                             hour: "2-digit",
                             minute: "2-digit",
                           })}{" "}
-                          {patientNames.get(appt.patient) ?? "..."}
+                          {appointmentLabel(appt, patientNames)}
                         </p>
                         {height > 32 && (
                           <p className="font-label-sm text-label-sm truncate leading-tight opacity-70">

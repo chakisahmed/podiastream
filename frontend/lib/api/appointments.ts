@@ -3,7 +3,8 @@ import type { Appointment } from "@/types/appointment";
 import type { PaginatedResponse } from "@/types/patient";
 
 export type AppointmentInput = {
-  patient: string;
+  patient: string | null;
+  booked_name?: string;
   appointment_type: Appointment["appointment_type"];
   status: Appointment["status"];
   start_time: string;

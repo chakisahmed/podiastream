@@ -6,7 +6,7 @@ import { MaterialIcon } from "@/components/shared/material-icon";
 import { STATUS_ACCENT_CLASS, STATUS_BADGE_CLASS } from "@/components/agenda/status-styles";
 import { listAppointments } from "@/lib/api/appointments";
 import { getWeekDays } from "@/lib/calendar-utils";
-import { resolvePatientNames } from "@/lib/patient-name-cache";
+import { appointmentLabel, resolvePatientNames } from "@/lib/patient-name-cache";
 import { APPOINTMENT_STATUS_LABELS, APPOINTMENT_TYPE_LABELS } from "@/types/appointment";
 import type { Appointment } from "@/types/appointment";
 
@@ -124,7 +124,7 @@ export default function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {appointments.map((appt) => {
-              const initials = (patientNames.get(appt.patient) ?? "??")
+              const initials = appointmentLabel(appt, patientNames)
                 .split(" ")
                 .map((part) => part.charAt(0))
                 .join("")
@@ -162,7 +162,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h3 className="font-label-md text-label-md text-on-surface">
-                        {patientNames.get(appt.patient) ?? "..."}
+                        {appointmentLabel(appt, patientNames)}
                       </h3>
                       <p className="font-body-sm text-body-sm text-on-surface-variant">
                         {APPOINTMENT_TYPE_LABELS[appt.appointment_type]}
@@ -170,12 +170,18 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="mt-auto pt-4 border-t border-outline-variant/20 flex justify-between items-center">
-                    <Link
-                      href={`/patients/${appt.patient}`}
-                      className="text-primary hover:text-primary-container font-label-md text-label-md transition-colors flex items-center gap-1"
-                    >
-                      Dossier <MaterialIcon name="arrow_forward" className="text-[18px]" />
-                    </Link>
+                    {appt.patient ? (
+                      <Link
+                        href={`/patients/${appt.patient}`}
+                        className="text-primary hover:text-primary-container font-label-md text-label-md transition-colors flex items-center gap-1"
+                      >
+                        Dossier <MaterialIcon name="arrow_forward" className="text-[18px]" />
+                      </Link>
+                    ) : (
+                      <span className="font-label-sm text-label-sm text-on-surface-variant">
+                        Pas encore de dossier
+                      </span>
+                    )}
                   </div>
                 </div>
               );

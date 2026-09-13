@@ -15,7 +15,7 @@ import {
   rangeForView,
   shiftDate,
 } from "@/lib/calendar-utils";
-import { resolvePatientNames } from "@/lib/patient-name-cache";
+import { appointmentLabel, resolvePatientNames } from "@/lib/patient-name-cache";
 import type { Appointment } from "@/types/appointment";
 
 export default function AgendaPage() {
@@ -133,7 +133,7 @@ export default function AgendaPage() {
             modalState.mode === "edit"
               ? {
                   ...modalState.appointment,
-                  patientLabel: patientNames.get(modalState.appointment.patient),
+                  patientLabel: appointmentLabel(modalState.appointment, patientNames),
                 }
               : undefined
           }
