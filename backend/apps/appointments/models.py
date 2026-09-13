@@ -27,6 +27,9 @@ class Appointment(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     notes = models.TextField(blank=True)
+    # calendar.event this was imported from, or null for a date-tag visit that
+    # had no calendar counterpart. Also the import's idempotency key.
+    odoo_event_id = models.IntegerField(null=True, blank=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

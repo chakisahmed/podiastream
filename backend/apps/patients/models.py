@@ -22,6 +22,9 @@ class Patient(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    # res.partner this was imported from. Makes the import idempotent, and
+    # traces a record back to the Odoo archive when something looks wrong.
+    odoo_partner_id = models.IntegerField(null=True, blank=True, unique=True)
 
     class Meta:
         db_table = "patients"
