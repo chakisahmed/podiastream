@@ -12,5 +12,6 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/patients", label: "Patients", icon: "group" },
   { href: "/agenda", label: "Agenda", icon: "calendar_month" },
   { href: "/insoles", label: "Insoles", icon: "precision_manufacturing" },
+  { href: "/inventory", label: "Stock", icon: "inventory_2" },
   { href: "/settings", label: "Settings", icon: "settings" },
 ];

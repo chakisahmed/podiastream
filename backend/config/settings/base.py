@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "apps.patients",
     "apps.appointments",
     "apps.insoles",
+    "apps.inventory",
     "apps.documents",
     "apps.core",
 ]
